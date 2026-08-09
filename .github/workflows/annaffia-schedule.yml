@@ -29,6 +29,8 @@ name: Annaffiatura programmata
 on:
   schedule:
     # MODIFICA QUESTO ORARIO secondo le tue esigenze (vedi note sopra)
+    - cron: '30 4 * * *'  # 6:30 in Italia (ora legale)
+    - cron: '40 4 * * *'  # 6:40 in Italia (ora legale)
     - cron: '0 5 * * *'  # ogni giorno alle 5:00 UTC (le 7:00 in Italia in estate)
   workflow_dispatch: {}   # permette anche di farlo scattare manualmente da GitHub
 
