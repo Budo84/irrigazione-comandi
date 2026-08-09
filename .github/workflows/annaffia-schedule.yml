@@ -1,0 +1,53 @@
+# Workflow di annaffiatura programmata
+#
+# COME USARLO:
+# 1. Nel tuo repository "irrigazione-comandi" su GitHub, crea questo percorso
+#    esatto di cartelle e file (usando "Add file" -> "Create new file" e
+#    scrivendo il percorso completo nel campo nome, GitHub crea le cartelle
+#    da solo):
+#       .github/workflows/annaffia-schedule.yml
+# 2. Incolla dentro tutto questo contenuto
+# 3. Modifica gli orari in "cron" qui sotto secondo le tue esigenze (vedi note)
+# 4. Commit changes
+#
+# Da quel momento, GitHub farà scattare l'annaffiatura automaticamente agli
+# orari che imposti, senza che tu debba toccare nulla.
+#
+# NOTE SUGLI ORARI (cron):
+# - Gli orari sono in UTC, non in ora italiana! In estate (ora legale) l'Italia
+#   è UTC+2, in inverno UTC+1. Quindi per annaffiare alle 7:00 del mattino ora
+#   italiana in estate, scrivi "0 5 * * *" (7 meno 2 = 5).
+# - Formato: minuto ora giorno-mese mese giorno-settimana
+# - Esempio "0 5 * * *"        -> ogni giorno alle 5:00 UTC
+# - Esempio "0 5 * * 1,4"      -> solo lunedì e giovedì alle 5:00 UTC
+# - Esempio "0 5,17 * * *"     -> ogni giorno alle 5:00 e alle 17:00 UTC
+# - GitHub non garantisce precisione al minuto: può ritardare di qualche
+#   minuto nei momenti di alto traffico, è normale.
+
+name: Annaffiatura programmata
+
+on:
+  schedule:
+    # MODIFICA QUESTO ORARIO secondo le tue esigenze (vedi note sopra)
+    - cron: '0 5 * * *'  # ogni giorno alle 5:00 UTC (le 7:00 in Italia in estate)
+  workflow_dispatch: {}   # permette anche di farlo scattare manualmente da GitHub
+
+jobs:
+  annaffia:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Incrementa il comando di annaffiatura
+        run: |
+          # Legge il numero attuale dal file
+          NUMERO_ATTUALE=$(cat annaffia.txt 2>/dev/null || echo "0")
+          NUOVO_NUMERO=$((NUMERO_ATTUALE + 1))
+          echo "$NUOVO_NUMERO" > annaffia.txt
+          echo "Nuovo comando: $NUOVO_NUMERO"
+
+      - name: Salva la modifica sul repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add annaffia.txt
+          git commit -m "Annaffiatura programmata automatica"
+          git push
