@@ -28,19 +28,22 @@ name: Annaffiatura programmata
 
 on:
   schedule:
-    # MODIFICA QUESTO ORARIO secondo le tue esigenze (vedi note sopra)
     - cron: '30 4 * * *'  # 6:30 in Italia (ora legale)
     - cron: '40 4 * * *'  # 6:40 in Italia (ora legale)
-    - cron: '0 5 * * *'  # ogni giorno alle 5:00 UTC (le 7:00 in Italia in estate)
   workflow_dispatch: {}   # permette anche di farlo scattare manualmente da GitHub
+
+permissions:
+  contents: write   # necessario per poter fare il commit/push del file
 
 jobs:
   annaffia:
     runs-on: ubuntu-latest
     steps:
+      - name: Scarica il repository
+        uses: actions/checkout@v4
+
       - name: Incrementa il comando di annaffiatura
         run: |
-          # Legge il numero attuale dal file
           NUMERO_ATTUALE=$(cat annaffia.txt 2>/dev/null || echo "0")
           NUOVO_NUMERO=$((NUMERO_ATTUALE + 1))
           echo "$NUOVO_NUMERO" > annaffia.txt
