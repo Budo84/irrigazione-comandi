@@ -30,6 +30,8 @@ on:
   schedule:
     - cron: '30 4 * * *'  # 6:30 in Italia (ora legale)
     - cron: '40 4 * * *'  # 6:40 in Italia (ora legale)
+    - cron: '30 6 * * *'
+    - cron: '30 8 * * *'
   workflow_dispatch: {}   # permette anche di farlo scattare manualmente da GitHub
 
 permissions:
